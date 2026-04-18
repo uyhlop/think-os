@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThinkRN NCLEX Quiz Demo</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #131a2e;
+      --panel-2: #1a2340;
+      --text: #e8ecf8;
+      --muted: #9aa6c7;
+      --accent: #7c9cff;
+      --accent-2: #55d6be;
+      --danger: #ff6b81;
+      --warning: #ffd166;
+      --success: #53d690;
+      --border: rgba(255,255,255,0.08);
+      --shadow: 0 20px 45px rgba(0,0,0,0.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(124,156,255,0.16), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(85,214,190,0.10), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 18px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 920px;
+      margin: auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero,
+    .card {
+      background: rgba(19,26,46,0.92);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero {
+      padding: 22px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      line-height: 1.2;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 600px;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.92rem;
+      white-space: nowrap;
+    }
+
+    .card {
+      padding: 22px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: var(--panel-2);
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .metric-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .timer-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 1s linear, background 0.3s ease;
+    }
+
+    .question-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(124,156,255,0.12);
+      border: 1px solid rgba(124,156,255,0.25);
+      border-radius: 999px;
+      color: #cfd9ff;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+    }
+
+    .question-text {
+      font-size: clamp(1.1rem, 2.8vw, 1.45rem);
+      line-height: 1.45;
+      margin: 0 0 18px;
+    }
+
+    .choices {
+      display: grid;
+      gap: 12px;
+    }
+
+    .choice {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      padding: 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .choice:hover:not(:disabled),
+    .choice:focus-visible:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(124,156,255,0.45);
+      background: rgba(124,156,255,0.08);
+      outline: none;
+    }
+
+    .choice.correct {
+      background: rgba(83,214,144,0.13);
+      border-color: rgba(83,214,144,0.55);
+    }
+
+    .choice.wrong {
+      background: rgba(255,107,129,0.12);
+      border-color: rgba(255,107,129,0.5);
+    }
+
+    .choice:disabled {
+      cursor: default;
+      opacity: 1;
+    }
+
+    .feedback {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      display: none;
+    }
+
+    .feedback.show { display: block; }
+
+    .feedback h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .feedback p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .feedback.correct h3 { color: var(--success); }
+    .feedback.incorrect h3 { color: var(--danger); }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #97adff);
+      color: #0b1020;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .summary {
+      display: none;
+      text-align: center;
+      padding: 12px 4px 4px;
+    }
+
+    .summary.show { display: block; }
+
+    .summary h2 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      margin: 10px 0;
+    }
+
+    .summary p {
+      color: var(--muted);
+      max-width: 620px;
+      margin: 0 auto 14px;
+      line-height: 1.6;
+    }
+
+    .score-ring {
+      width: 138px;
+      height: 138px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      background: conic-gradient(var(--accent-2) var(--fill), rgba(255,255,255,0.08) 0);
+      position: relative;
+    }
+
+    .score-ring::after {
+      content: "";
+      position: absolute;
+      inset: 11px;
+      border-radius: 50%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+    }
+
+    .score-ring span {
+      position: relative;
+      z-index: 1;
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .review-list {
+      margin-top: 18px;
+      text-align: left;
+      display: grid;
+      gap: 12px;
+    }
+
+    .review-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .review-item strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .review-item small {
+      color: var(--muted);
+      line-height: 1.5;
+      display: block;
+    }
+
+    .empty {
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      body { padding: 12px; }
+      .hero, .card { padding: 16px; }
+      .topbar { grid-template-columns: 1fr; }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div>
+        <h1>ThinkRN NCLEX Quiz Demo</h1>
+        <p>A simple proof-of-concept quiz for Fundamentals of Nursing with timed questions, instant rationales, score tracking, and a mobile-friendly dark interface.</p>
+      </div>
+      <div class="pill-row">
+        <div class="pill">Mode: Dark UI</div>
+        <div class="pill">Topic: Fundamentals</div>
+        <div class="pill">Format: NCLEX-style</div>
+      </div>
+    </section>
+
+    <section class="card" id="quizCard">
+      <div class="topbar">
+        <div class="metric">
+          <div class="metric-label">Question</div>
+          <div class="metric-value" id="questionCounter">1 / 6</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Score</div>
+          <div class="metric-value" id="scoreCounter">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Time Left</div>
+          <div class="metric-value" id="timerText">25s</div>
+          <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+        </div>
+      </div>
+
+      <div id="questionView">
+        <div class="question-tag">Fundamentals of Nursing</div>
+        <h2 class="question-text" id="questionText"></h2>
+        <div class="choices" id="choices"></div>
+        <div class="feedback" id="feedbackBox">
+          <h3 id="feedbackTitle"></h3>
+          <p id="feedbackText"></p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-secondary" id="restartBtn" type="button">Restart Quiz</button>
+          <button class="btn btn-primary" id="nextBtn" type="button" disabled>Next Question</button>
+        </div>
+      </div>
+
+      <div class="summary" id="summaryView">
+        <div class="score-ring" id="scoreRing" style="--fill: 0deg;"><span id="finalPercent">0%</span></div>
+        <h2>Quiz Complete</h2>
+        <p id="summaryText"></p>
+        <div class="actions" style="justify-content:center;">
+          <button class="btn btn-primary" id="restartBtnBottom" type="button">Try Again</button>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "A nurse is preparing to transfer a patient from the bed to a chair. Which action should the nurse take first?",
+        choices: [
+          "Place the chair directly behind the nurse",
+          "Assess the patient's ability to bear weight and follow directions",
+          "Ask the patient to stand quickly and pivot",
+          "Hold the patient under the arms during the move"
+        ],
+        answer: 1,
+        rationale: "The nurse should first assess safety factors such as weight-bearing ability, strength, and ability to follow instructions. This determines whether assistive devices or additional staff are needed.",
+        topic: "Safety and Mobility"
+      },
+      {
+        question: "A postoperative patient reports pain rated 8 out of 10 one hour after receiving pain medication. What is the nurse's priority action?",
+        choices: [
+          "Document that the medication was ineffective",
+          "Reassess the patient, including pain location, quality, and vital signs",
+          "Tell the patient to wait until the next scheduled dose",
+          "Encourage the patient to sleep so the pain will lessen"
+        ],
+        answer: 1,
+        rationale: "When pain is still severe after medication, the nurse should reassess thoroughly before taking the next step. Reassessment guides safe follow-up actions and possible provider notification.",
+        topic: "Pain Management"
+      },
+      {
+        question: "Which finding requires immediate follow-up when the nurse is caring for a patient receiving oxygen by nasal cannula at 2 L/min?",
+        choices: [
+          "The patient has dry nasal mucosa",
+          "The oxygen tubing is attached to the wall flowmeter",
+          "The patient's respiratory rate is 10/min and difficult to arouse",
+          "The patient is sitting in semi-Fowler's position"
+        ],
+        answer: 2,
+        rationale: "A low respiratory rate with decreased responsiveness may indicate respiratory depression or clinical deterioration and requires immediate assessment and intervention.",
+        topic: "Oxygenation"
+      },
+      {
+        question: "A nurse is reinforcing teaching about infection prevention. Which statement by the patient shows correct understanding?",
+        choices: [
+          "I only need to wash my hands when they look dirty",
+          "Alcohol-based hand rub is not useful after touching surfaces",
+          "Hand hygiene should be done before and after patient contact",
+          "Wearing gloves means handwashing is unnecessary"
+        ],
+        answer: 2,
+        rationale: "Proper hand hygiene is required before and after patient contact to reduce transmission of microorganisms. Gloves do not replace hand hygiene.",
+        topic: "Infection Control"
+      },
+      {
+        question: "The nurse is checking a patient's identification before giving medication. Which identifiers are appropriate to use?",
+        choices: [
+          "Room number and diagnosis",
+          "Patient's full name and date of birth",
+          "Bed number and age",
+          "Family member confirmation and room number"
+        ],
+        answer: 1,
+        rationale: "Medication safety requires two approved patient identifiers, such as full name and date of birth. Room and bed numbers are not acceptable identifiers.",
+        topic: "Medication Safety"
+      },
+      {
+        question: "Which action is most appropriate when the nurse observes redness over a patient's sacrum?",
+        choices: [
+          "Massage the reddened area to improve circulation",
+          "Apply a heating pad to the area",
+          "Reposition the patient and reduce pressure on the area",
+          "Document the redness and reassess in 24 hours"
+        ],
+        answer: 2,
+        rationale: "Redness over a pressure point may be an early pressure injury. The priority nursing action is to relieve pressure immediately through repositioning and pressure reduction.",
+        topic: "Skin Integrity"
+      }
+    ];
+
+    const timePerQuestion = 25;
+    let currentIndex = 0;
+    let score = 0;
+    let secondsLeft = timePerQuestion;
+    let intervalId = null;
+    let locked = false;
+    let review = [];
+
+    const questionCounter = document.getElementById('questionCounter');
+    const scoreCounter = document.getElementById('scoreCounter');
+    const timerText = document.getElementById('timerText');
+    const timerBar = document.getElementById('timerBar');
+    const questionText = document.getElementById('questionText');
+    const choicesEl = document.getElementById('choices');
+    const feedbackBox = document.getElementById('feedbackBox');
+    const feedbackTitle = document.getElementById('feedbackTitle');
+    const feedbackText = document.getElementById('feedbackText');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const restartBtnBottom = document.getElementById('restartBtnBottom');
+    const questionView = document.getElementById('questionView');
+    const summaryView = document.getElementById('summaryView');
+    const summaryText = document.getElementById('summaryText');
+    const finalPercent = document.getElementById('finalPercent');
+    const scoreRing = document.getElementById('scoreRing');
+    const reviewList = document.getElementById('reviewList');
+
+    function startTimer() {
+      clearInterval(intervalId);
+      secondsLeft = timePerQuestion;
+      updateTimerUI();
+      intervalId = setInterval(() => {
+        secondsLeft -= 1;
+        updateTimerUI();
+        if (secondsLeft <= 0) {
+          clearInterval(intervalId);
+          handleTimeout();
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      timerText.textContent = `${secondsLeft}s`;
+      const percent = Math.max(0, (secondsLeft / timePerQuestion) * 100);
+      timerBar.style.width = `${percent}%`;
+      if (percent <= 30) {
+        timerBar.style.background = 'linear-gradient(90deg, #ff6b81, #ffd166)';
+      } else {
+        timerBar.style.background = 'linear-gradient(90deg, #7c9cff, #55d6be)';
+      }
+    }
+
+    function renderQuestion() {
+      locked = false;
+      nextBtn.disabled = true;
+      feedbackBox.className = 'feedback';
+      feedbackTitle.textContent = '';
+      feedbackText.textContent = '';
+
+      const current = questions[currentIndex];
+      questionCounter.textContent = `${currentIndex + 1} / ${questions.length}`;
+      scoreCounter.textContent = score;
+      questionText.textContent = current.question;
+      document.querySelector('.question-tag').textContent = current.topic;
+      choicesEl.innerHTML = '';
+
+      current.choices.forEach((choice, index) => {
+        const button = document.createElement('button');
+        button.className = 'choice';
+        button.type = 'button';
+        button.innerHTML = `<strong>${String.fromCharCode(65 + index)}.</strong> ${choice}`;
+        button.addEventListener('click', () => handleAnswer(index));
+        choicesEl.appendChild(button);
+      });
+
+      startTimer();
+    }
+
+    function lockChoices() {
+      locked = true;
+      Array.from(choicesEl.children).forEach((btn) => btn.disabled = true);
+      nextBtn.disabled = false;
+      clearInterval(intervalId);
+    }
+
+    function showFeedback(isCorrect, rationale, chosenIndex = null) {
+      feedbackBox.className = `feedback show ${isCorrect ? 'correct' : 'incorrect'}`;
+      feedbackTitle.textContent = isCorrect ? 'Correct' : 'Review This Rationale';
+      feedbackText.textContent = rationale;
+
+      const current = questions[currentIndex];
+      Array.from(choicesEl.children).forEach((btn, index) => {
+        if (index === current.answer) btn.classList.add('correct');
+        if (chosenIndex !== null && index === chosenIndex && chosenIndex !== current.answer) {
+          btn.classList.add('wrong');
+        }
+      });
+    }
+
+    function handleAnswer(selectedIndex) {
+      if (locked) return;
+      const current = questions[currentIndex];
+      const isCorrect = selectedIndex === current.answer;
+      if (isCorrect) score += 1;
+      scoreCounter.textContent = score;
+      lockChoices();
+      showFeedback(isCorrect, current.rationale, selectedIndex);
+      review.push({
+        question: current.question,
+        correct: isCorrect,
+        rationale: current.rationale
+      });
+    }
+
+    function handleTimeout() {
+      if (locked) return;
+      const current = questions[currentIndex];
+      lockChoices();
+      showFeedback(false, `Time ran out. ${current.rationale}`);
+      review.push({
+        question: current.question,
+        correct: false,
+        rationale: `Time ran out. ${current.rationale}`
+      });
+    }
+
+    function nextQuestion() {
+      currentIndex += 1;
+      if (currentIndex < questions.length) {
+        renderQuestion();
+      } else {
+        renderSummary();
+      }
+    }
+
+    function renderSummary() {
+      questionView.style.display = 'none';
+      summaryView.classList.add('show');
+      const percent = Math.round((score / questions.length) * 100);
+      finalPercent.textContent = `${percent}%`;
+      scoreRing.style.setProperty('--fill', `${(percent / 100) * 360}deg`);
+      summaryText.textContent = `You answered ${score} out of ${questions.length} questions correctly. This simple demo shows how ThinkRN can teach, explain, and reinforce core nursing concepts.`;
+      reviewList.innerHTML = review.map((item, index) => `
+        <div class="review-item">
+          <strong>${index + 1}. ${item.question}</strong>
+          <small><b>${item.correct ? 'Result: Correct.' : 'Result: Needs review.'}</b> ${item.rationale}</small>
+        </div>
+      `).join('');
+      clearInterval(intervalId);
+    }
+
+    function restartQuiz() {
+      clearInterval(intervalId);
+      currentIndex = 0;
+      score = 0;
+      review = [];
+      questionView.style.display = 'block';
+      summaryView.classList.remove('show');
+      renderQuestion();
+    }
+
+    nextBtn.addEventListener('click', nextQuestion);
+    restartBtn.addEventListener('click', restartQuiz);
+    restartBtnBottom.addEventListener('click', restartQuiz);
+
+    renderQuestion();
+  </script>
+</body>
+</html>

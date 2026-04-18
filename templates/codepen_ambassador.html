@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThinkRN Ambassador Application Demo</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: rgba(255,255,255,0.88);
+      --panel-strong: #ffffff;
+      --text: #132033;
+      --muted: #5d6b80;
+      --accent: #3a63ff;
+      --accent-soft: rgba(58,99,255,0.10);
+      --success: #0e9f6e;
+      --danger: #d14343;
+      --border: rgba(19,32,51,0.10);
+      --shadow: 0 24px 60px rgba(26, 42, 77, 0.12);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(58,99,255,0.10), transparent 25%),
+        radial-gradient(circle at bottom left, rgba(14,159,110,0.08), transparent 24%),
+        var(--bg);
+      color: var(--text);
+      padding: 18px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero {
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      line-height: 1.15;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 640px;
+      line-height: 1.6;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--panel-strong);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.93rem;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1.35fr;
+      gap: 16px;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .side-card {
+      height: 100%;
+      background: linear-gradient(180deg, rgba(58,99,255,0.06), rgba(14,159,110,0.04));
+    }
+
+    .side-card h2,
+    .form-card h2,
+    .success-card h2 {
+      margin: 0 0 10px;
+      font-size: 1.3rem;
+    }
+
+    .side-card p,
+    .form-card p,
+    .success-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .steps {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .step {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid var(--border);
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .step span {
+      color: var(--muted);
+      line-height: 1.5;
+      display: block;
+      font-size: 0.96rem;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(19,32,51,0.14);
+      border-radius: 14px;
+      padding: 14px 15px;
+      font: inherit;
+      color: var(--text);
+      background: rgba(255,255,255,0.96);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: rgba(58,99,255,0.55);
+      box-shadow: 0 0 0 4px rgba(58,99,255,0.12);
+      transform: translateY(-1px);
+    }
+
+    textarea {
+      min-height: 120px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: -2px;
+    }
+
+    .error {
+      color: var(--danger);
+      font-size: 0.88rem;
+      min-height: 1.1em;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+      font-size: 0.98rem;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #6e8dff);
+      color: #ffffff;
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .success-card {
+      display: none;
+      text-align: center;
+      padding-top: 34px;
+      padding-bottom: 34px;
+    }
+
+    .success-card.show {
+      display: block;
+    }
+
+    .success-icon {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: rgba(14,159,110,0.12);
+      color: var(--success);
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      margin: 0 auto 18px;
+      border: 1px solid rgba(14,159,110,0.20);
+    }
+
+    .success-box {
+      background: rgba(14,159,110,0.06);
+      border: 1px solid rgba(14,159,110,0.16);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: left;
+      max-width: 520px;
+      margin: 18px auto 0;
+    }
+
+    .success-box strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .success-box ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .hero, .panel { padding: 16px; }
+      .row { grid-template-columns: 1fr; }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div>
+        <h1>ThinkRN Ambassador Application Demo</h1>
+        <p>A clean intake form that shows how student ambassador recruiting could work for ThinkRN. It validates key fields and ends with a simple confirmation screen.</p>
+      </div>
+      <div class="hero-badges">
+        <div class="badge">Professional UI</div>
+        <div class="badge">Validation</div>
+        <div class="badge">Success Screen</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="panel side-card">
+        <h2>How this demo works</h2>
+        <p>This is a front-end proof-of-concept. A student fills out the form, the system checks the required details, and then the user sees a clear confirmation that the application was received.</p>
+        <div class="steps">
+          <div class="step">
+            <strong>1. Student applies</strong>
+            <span>They enter contact details, school info, and what they struggle with while preparing for nursing exams.</span>
+          </div>
+          <div class="step">
+            <strong>2. Form checks the basics</strong>
+            <span>Required fields, email format, and short written answers are validated before submission.</span>
+          </div>
+          <div class="step">
+            <strong>3. Confirmation appears</strong>
+            <span>The student sees a friendly success screen that confirms next steps and expected follow-up.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel form-card" id="formCard">
+        <h2>Apply to be a ThinkRN Ambassador</h2>
+        <p>Tell us a little about yourself and why you want to help students prepare for the NCLEX.</p>
+
+        <form id="ambassadorForm" novalidate>
+          <div class="row">
+            <div class="field">
+              <label for="name">Full name</label>
+              <input id="name" name="name" type="text" placeholder="Ray Kosgei" />
+              <div class="error" data-error-for="name"></div>
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="ray@example.edu" />
+              <div class="error" data-error-for="email"></div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="university">University</label>
+              <input id="university" name="university" type="text" placeholder="University of Texas at Arlington" />
+              <div class="error" data-error-for="university"></div>
+            </div>
+            <div class="field">
+              <label for="major">Major</label>
+              <input id="major" name="major" type="text" placeholder="Nursing" />
+              <div class="error" data-error-for="major"></div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="year">Year in school</label>
+              <select id="year" name="year">
+                <option value="">Select one</option>
+                <option>Pre-Nursing</option>
+                <option>1st Year</option>
+                <option>2nd Year</option>
+                <option>3rd Year</option>
+                <option>4th Year</option>
+                <option>Graduate / Recent Grad</option>
+              </select>
+              <div class="error" data-error-for="year"></div>
+            </div>
+            <div class="field">
+              <label for="intent">Why do you want to join?</label>
+              <select id="intent" name="intent">
+                <option value="">Select one</option>
+                <option>Help other students</option>
+                <option>Build leadership experience</option>
+                <option>Grow campus presence</option>
+                <option>All of the above</option>
+              </select>
+              <div class="error" data-error-for="intent"></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="struggles">What study struggles do you see most often?</label>
+            <textarea id="struggles" name="struggles" placeholder="Example: Students feel overwhelmed by pharmacology, test anxiety, and knowing how to review rationales effectively."></textarea>
+            <div class="hint">Write at least 20 characters so the answer feels real.</div>
+            <div class="error" data-error-for="struggles"></div>
+          </div>
+
+          <div class="field">
+            <label for="pitch">Why would you be a strong ambassador?</label>
+            <textarea id="pitch" name="pitch" placeholder="Example: I enjoy helping classmates study, I’m active on campus, and I know what students actually struggle with."></textarea>
+            <div class="hint">Write at least 20 characters.</div>
+            <div class="error" data-error-for="pitch"></div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Submit Application</button>
+            <button class="btn btn-secondary" type="reset">Clear Form</button>
+          </div>
+        </form>
+      </article>
+
+      <article class="panel success-card hidden" id="successCard">
+        <div class="success-icon">✓</div>
+        <h2>Application received</h2>
+        <p id="successMessage"></p>
+        <div class="success-box">
+          <strong>What happens next</strong>
+          <ul>
+            <li>Your application is logged for review.</li>
+            <li>You receive a short follow-up email with next steps.</li>
+            <li>If there is a fit, the team schedules a quick intro conversation.</li>
+          </ul>
+        </div>
+        <div class="actions" style="justify-content:center; margin-top:18px;">
+          <button class="btn btn-primary" type="button" id="applyAgainBtn">Submit Another Demo Application</button>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    const form = document.getElementById('ambassadorForm');
+    const formCard = document.getElementById('formCard');
+    const successCard = document.getElementById('successCard');
+    const successMessage = document.getElementById('successMessage');
+    const applyAgainBtn = document.getElementById('applyAgainBtn');
+
+    function setError(fieldName, message) {
+      const errorEl = document.querySelector(`[data-error-for="${fieldName}"]`);
+      if (errorEl) errorEl.textContent = message;
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.error').forEach(el => el.textContent = '');
+    }
+
+    function validateEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+    }
+
+    function validateForm(data) {
+      clearErrors();
+      let isValid = true;
+
+      if (!data.name.trim()) {
+        setError('name', 'Please enter your full name.');
+        isValid = false;
+      }
+
+      if (!data.email.trim()) {
+        setError('email', 'Please enter your email address.');
+        isValid = false;
+      } else if (!validateEmail(data.email)) {
+        setError('email', 'Please enter a valid email address.');
+        isValid = false;
+      }
+
+      if (!data.university.trim()) {
+        setError('university', 'Please enter your university.');
+        isValid = false;
+      }
+
+      if (!data.major.trim()) {
+        setError('major', 'Please enter your major.');
+        isValid = false;
+      }
+
+      if (!data.year.trim()) {
+        setError('year', 'Please select your year in school.');
+        isValid = false;
+      }
+
+      if (!data.intent.trim()) {
+        setError('intent', 'Please select your reason for joining.');
+        isValid = false;
+      }
+
+      if (data.struggles.trim().length < 20) {
+        setError('struggles', 'Please write a little more about student study struggles.');
+        isValid = false;
+      }
+
+      if (data.pitch.trim().length < 20) {
+        setError('pitch', 'Please explain why you would be a strong ambassador.');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = Object.fromEntries(new FormData(form).entries());
+      if (!validateForm(formData)) return;
+
+      successMessage.textContent = `${formData.name}, thank you for applying to be a ThinkRN Ambassador. Your demo application has been submitted successfully, and the team will follow up at ${formData.email}.`;
+      formCard.classList.add('hidden');
+      successCard.classList.remove('hidden');
+      successCard.classList.add('show');
+    });
+
+    form.addEventListener('reset', () => {
+      clearErrors();
+    });
+
+    applyAgainBtn.addEventListener('click', () => {
+      form.reset();
+      clearErrors();
+      successCard.classList.add('hidden');
+      successCard.classList.remove('show');
+      formCard.classList.remove('hidden');
+      document.getElementById('name').focus();
+    });
+  </script>
+</body>
+</html>

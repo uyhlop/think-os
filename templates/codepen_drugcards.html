@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThinkRN Drug Card Flashcards Demo</title>
+  <style>
+    :root {
+      --bg: #08111f;
+      --panel: #111b31;
+      --panel-2: #16233f;
+      --text: #eef2ff;
+      --muted: #9fafcf;
+      --accent: #7f9cff;
+      --accent-2: #54dac0;
+      --border: rgba(255,255,255,0.08);
+      --shadow: 0 24px 50px rgba(0,0,0,0.38);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(127,156,255,0.16), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(84,218,192,0.13), transparent 25%),
+        var(--bg);
+      padding: 18px;
+      display: grid;
+      place-items: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 980px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero,
+    .panel {
+      background: rgba(17,27,49,0.92);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero {
+      padding: 22px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.45rem, 3vw, 2.1rem);
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 630px;
+      line-height: 1.6;
+    }
+
+    .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .stage {
+      display: grid;
+      gap: 16px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .flashcard-wrap {
+      width: 100%;
+      max-width: 720px;
+      perspective: 1400px;
+    }
+
+    .flashcard {
+      position: relative;
+      width: 100%;
+      min-height: 430px;
+      transform-style: preserve-3d;
+      transition: transform 0.75s cubic-bezier(.2,.7,.2,1);
+      cursor: pointer;
+    }
+
+    .flashcard.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      backface-visibility: hidden;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: linear-gradient(165deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .front {
+      padding: 26px;
+    }
+
+    .back {
+      padding: 24px;
+      transform: rotateY(180deg);
+      background: linear-gradient(165deg, rgba(84,218,192,0.07), rgba(127,156,255,0.06));
+    }
+
+    .card-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(127,156,255,0.12);
+      border: 1px solid rgba(127,156,255,0.28);
+      color: #d9e3ff;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      margin-bottom: 14px;
+    }
+
+    .drug-name {
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      line-height: 1.1;
+      margin: 0 0 10px;
+    }
+
+    .drug-class {
+      margin: 0 0 18px;
+      color: var(--accent-2);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .lead {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .flip-hint {
+      margin-top: 22px;
+      color: #d8def5;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
+
+    .back h2 {
+      margin: 0 0 14px;
+      font-size: 1.3rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .detail-title {
+      margin: 0 0 6px;
+      color: #d8e4ff;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .detail p {
+      margin: 0;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .controls {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+      font-size: 0.98rem;
+      flex: 1 1 180px;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #aab9ff);
+      color: #08111f;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      width: 26px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .swipe-note {
+      color: var(--muted);
+      text-align: center;
+      margin: 2px 0 0;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 12px; }
+      .hero, .panel { padding: 16px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .flashcard { min-height: 500px; }
+      .controls { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div>
+        <h1>ThinkRN Drug Card Demo</h1>
+        <p>A simple flashcard proof-of-concept for pharmacology review. Click the card to flip it, then move through high-yield medications using buttons or a quick swipe.</p>
+      </div>
+      <div class="meta">
+        <div class="badge">Dark Mode</div>
+        <div class="badge">Interactive Flip</div>
+        <div class="badge">Mobile Friendly</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="toolbar">
+        <div class="metric">
+          <div class="metric-label">Card</div>
+          <div class="metric-value" id="cardCounter">1 / 6</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Drug Name</div>
+          <div class="metric-value" id="drugTitleMetric">Metformin</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Topic</div>
+          <div class="metric-value">Nursing Pharmacology</div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="flashcard-wrap">
+          <div class="flashcard" id="flashcard" aria-label="Drug card" tabindex="0" role="button">
+            <article class="face front">
+              <div>
+                <div class="card-chip">Front of Card</div>
+                <h2 class="drug-name" id="frontDrugName"></h2>
+                <p class="drug-class" id="frontDrugClass"></p>
+                <p class="lead" id="frontSummary"></p>
+              </div>
+              <div class="flip-hint">Tap or click to flip</div>
+            </article>
+
+            <article class="face back">
+              <div>
+                <div class="card-chip">Back of Card</div>
+                <h2 id="backDrugName"></h2>
+                <div class="detail-grid">
+                  <div class="detail">
+                    <div class="detail-title">Mechanism</div>
+                    <p id="mechanism"></p>
+                  </div>
+                  <div class="detail">
+                    <div class="detail-title">Side Effects</div>
+                    <p id="sideEffects"></p>
+                  </div>
+                  <div class="detail">
+                    <div class="detail-title">Nursing Considerations</div>
+                    <p id="nursingConsiderations"></p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-secondary" id="prevBtn" type="button">Previous</button>
+          <button class="btn btn-primary" id="flipBtn" type="button">Flip Card</button>
+          <button class="btn btn-secondary" id="nextBtn" type="button">Next</button>
+        </div>
+
+        <div class="dots" id="dots"></div>
+        <p class="swipe-note">Swipe left or right on mobile to move between cards.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const cards = [
+      {
+        name: 'Metformin',
+        className: 'Biguanide',
+        summary: 'Common first-line medication for type 2 diabetes. Helps lower blood glucose without usually causing major weight gain.',
+        mechanism: 'Decreases glucose production in the liver and improves insulin sensitivity in body tissues.',
+        sideEffects: 'GI upset, diarrhea, nausea, reduced appetite, and rarely lactic acidosis.',
+        nursing: 'Monitor renal function, give with meals to reduce stomach upset, and hold before some contrast studies if ordered.'
+      },
+      {
+        name: 'Lisinopril',
+        className: 'ACE Inhibitor',
+        summary: 'Used for hypertension, heart failure, and kidney protection in some patients with diabetes.',
+        mechanism: 'Blocks conversion of angiotensin I to angiotensin II, lowering vasoconstriction and reducing aldosterone release.',
+        sideEffects: 'Cough, dizziness, hypotension, high potassium, and angioedema.',
+        nursing: 'Check blood pressure and potassium, monitor kidney function, and teach the patient to report facial swelling immediately.'
+      },
+      {
+        name: 'Furosemide',
+        className: 'Loop Diuretic',
+        summary: 'Often used for fluid overload, edema, and some cases of hypertension.',
+        mechanism: 'Blocks sodium and chloride reabsorption in the loop of Henle, causing strong diuresis.',
+        sideEffects: 'Dehydration, low potassium, low blood pressure, dizziness, and possible hearing effects at high doses.',
+        nursing: 'Track intake and output, daily weights, blood pressure, and electrolytes, especially potassium.'
+      },
+      {
+        name: 'Warfarin',
+        className: 'Anticoagulant',
+        summary: 'Prevents harmful blood clots but requires close monitoring and patient teaching.',
+        mechanism: 'Reduces production of vitamin K-dependent clotting factors in the liver.',
+        sideEffects: 'Bleeding, bruising, and interactions with many foods and medications.',
+        nursing: 'Monitor INR, assess for bleeding, and teach the patient to keep vitamin K intake consistent rather than avoiding it completely.'
+      },
+      {
+        name: 'Albuterol',
+        className: 'Short-Acting Beta2 Agonist',
+        summary: 'Quick-relief inhaler commonly used for bronchospasm in asthma or other reactive airway problems.',
+        mechanism: 'Relaxes bronchial smooth muscle by stimulating beta2 receptors in the lungs.',
+        sideEffects: 'Tachycardia, tremor, nervousness, and headache.',
+        nursing: 'Assess lung sounds and breathing response, teach proper inhaler technique, and use before inhaled steroids when both are ordered.'
+      },
+      {
+        name: 'Insulin Glargine',
+        className: 'Long-Acting Insulin',
+        summary: 'Provides steady basal insulin coverage over about 24 hours for glucose control.',
+        mechanism: 'Promotes cellular uptake of glucose and helps lower blood sugar gradually over a long period.',
+        sideEffects: 'Hypoglycemia, injection-site reactions, and possible weight gain.',
+        nursing: 'Do not mix with other insulins in the same syringe, monitor blood glucose trends, and teach signs of hypoglycemia.'
+      }
+    ];
+
+    let currentIndex = 0;
+    let isFlipped = false;
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const flashcard = document.getElementById('flashcard');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const flipBtn = document.getElementById('flipBtn');
+    const cardCounter = document.getElementById('cardCounter');
+    const drugTitleMetric = document.getElementById('drugTitleMetric');
+    const frontDrugName = document.getElementById('frontDrugName');
+    const frontDrugClass = document.getElementById('frontDrugClass');
+    const frontSummary = document.getElementById('frontSummary');
+    const backDrugName = document.getElementById('backDrugName');
+    const mechanism = document.getElementById('mechanism');
+    const sideEffects = document.getElementById('sideEffects');
+    const nursingConsiderations = document.getElementById('nursingConsiderations');
+    const dots = document.getElementById('dots');
+
+    function renderDots() {
+      dots.innerHTML = cards.map((_, index) => {
+        return `<button class="dot ${index === currentIndex ? 'active' : ''}" data-index="${index}" aria-label="Go to card ${index + 1}"></button>`;
+      }).join('');
+      dots.querySelectorAll('.dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+          currentIndex = Number(dot.dataset.index);
+          isFlipped = false;
+          renderCard();
+        });
+      });
+    }
+
+    function renderCard() {
+      const current = cards[currentIndex];
+      cardCounter.textContent = `${currentIndex + 1} / ${cards.length}`;
+      drugTitleMetric.textContent = current.name;
+      frontDrugName.textContent = current.name;
+      frontDrugClass.textContent = current.className;
+      frontSummary.textContent = current.summary;
+      backDrugName.textContent = current.name;
+      mechanism.textContent = current.mechanism;
+      sideEffects.textContent = current.sideEffects;
+      nursingConsiderations.textContent = current.nursing;
+      flashcard.classList.toggle('is-flipped', isFlipped);
+      flipBtn.textContent = isFlipped ? 'Show Front' : 'Flip Card';
+      renderDots();
+    }
+
+    function flipCard() {
+      isFlipped = !isFlipped;
+      flashcard.classList.toggle('is-flipped', isFlipped);
+      flipBtn.textContent = isFlipped ? 'Show Front' : 'Flip Card';
+    }
+
+    function goNext() {
+      currentIndex = (currentIndex + 1) % cards.length;
+      isFlipped = false;
+      renderCard();
+    }
+
+    function goPrev() {
+      currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+      isFlipped = false;
+      renderCard();
+    }
+
+    flashcard.addEventListener('click', flipCard);
+    flashcard.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        flipCard();
+      }
+    });
+
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+    flipBtn.addEventListener('click', flipCard);
+
+    flashcard.addEventListener('touchstart', (event) => {
+      touchStartX = event.changedTouches[0].screenX;
+    }, { passive: true });
+
+    flashcard.addEventListener('touchend', (event) => {
+      touchEndX = event.changedTouches[0].screenX;
+      const distance = touchEndX - touchStartX;
+      if (Math.abs(distance) > 50) {
+        if (distance < 0) {
+          goNext();
+        } else {
+          goPrev();
+        }
+      }
+    }, { passive: true });
+
+    renderCard();
+  </script>
+</body>
+</html>
