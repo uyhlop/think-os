@@ -1,0 +1,17 @@
+Read AGENTS.md, Prompt.md, Plan.md, and Status.md first.
+
+Then do the following in order.
+
+1. Spawn the architect agent to inspect the repo and identify the smallest complete high value milestone to execute next.
+2. Spawn the ui_reviewer agent to identify student experience issues, mobile risks, empty state gaps, and obvious polish opportunities.
+3. Spawn the qa_guard agent to identify current verification commands, missing checks, and likely regression risks.
+4. After those results return, synthesize the findings and choose one bounded milestone that can be completed in this session.
+5. If the repo already has a student facing app, improve the real app.
+6. If the repo is mostly empty or incomplete, scaffold the smallest credible student dashboard flow for ThinkRN without overbuilding. Target topic cards, recent performance, missed questions filter, mobile friendly layout, and empty states.
+7. Use the build-and-verify skill for implementation discipline.
+8. If nursing content structures are touched, use the author-question-set and validate-rationales skills.
+9. Make the smallest defensible change set.
+10. Run the relevant verification commands that exist in the repo.
+11. Update Status.md with what changed, what passed, open issues, and the next recommended step.
+
+While working, teach me briefly as you go.

@@ -1,0 +1,111 @@
+THINKRN SUNDAY OPERATOR RUNBOOK (USAGE-RESET SAFE)
+Date anchor: Sunday, April 19, 2026 (UTC)
+
+GOAL
+- Keep progress moving while app usage is capped.
+- Capture real metrics, prep Monday execution, and avoid random work.
+- Have a paste-ready plan for Claude/ChatGPT when quota resets.
+
+SCREENSHOT DECISION (IMPORTANT)
+- Do NOT use the search bar to merge.
+- Tap "View PR" in the bottom bar.
+- In the PR view: review Files changed -> confirm -> Merge pull request.
+- If you are blocked by usage limits, do prep work below and merge after reset.
+
+WHEN USAGE RESETS
+- Your screenshot says reset at 4:00 AM UTC.
+- On this timeline, next reset is Monday, April 20, 2026 at 4:00 AM UTC.
+
+PHASE 1 — OFFLINE WORK (NOW, NO EXTRA USAGE)
+1) Capture week targets in notes:
+   - Exam date/time
+   - Study blocks available
+   - Topics with weakest confidence (top 3)
+2) Fill daily metric tracker (template below).
+3) Gather source files in Google Drive (GWS):
+   - /ThinkRN/01_Raw_Inputs
+   - /ThinkRN/02_Objective_Map
+   - /ThinkRN/03_Normalized_Exams
+   - /ThinkRN/04_Datadog_Exports
+   - /ThinkRN/05_Reports
+4) Prepare API key placeholders only (no secrets in repo):
+   - DATADOG_API_KEY=
+   - DATADOG_APP_KEY=
+   - OPENAI_API_KEY=
+   - TELEGRAM_BOT_TOKEN=
+   - TELEGRAM_CHAT_ID=
+
+PHASE 2 — RESET EXECUTION (FIRST 30 MIN AFTER RESET)
+1) Open this repo.
+2) Open FIRST_TASK_PROMPT.txt and paste into Claude Code.
+3) Ask for one bounded milestone only (no broad rewrite).
+4) Require output format:
+   - What changed
+   - Verification commands
+   - Open issues
+   - Next step
+
+PHASE 3 — LIVE METRICS LOOP (DAILY)
+Track these 8 metrics:
+1) Questions normalized (count)
+2) Objective-mapped questions (count)
+3) Fake-risk flags (count)
+4) Real-candidate questions (count)
+5) Avg rationale quality score (1-5)
+6) Study session completion rate (%)
+7) Time-to-publish set (minutes)
+8) Error/rollback count
+
+DAILY METRIC LOG TEMPLATE
+Date:
+Study block planned (min):
+Study block completed (min):
+Questions normalized:
+Questions objective-mapped:
+Real-candidate:
+Fake-risk:
+Rationale quality avg (1-5):
+Ops errors today:
+Notes:
+
+GWS (GOOGLE WORKSPACE) ADDITIONS
+- Google Calendar:
+  - Import docs/launch/THINKRN_BUILDER_OS_CALENDAR.ics
+  - Add recurring "Step 1 Datadog scrub + objective alignment" block.
+- Google Drive:
+  - Use the 5 folders above and keep one naming format:
+    YYYY-MM-DD_course_topic_batch-vN
+- Google Sheets:
+  - Create "ThinkRN_Ops_Metrics" with columns matching the Daily Metric Log template.
+
+API KEY SAFETY RULES
+- Keep keys only in local .env.local (never commit).
+- Rotate keys if accidentally exposed.
+- Use least privilege API tokens where possible.
+- Share setup steps publicly, not secret values.
+
+PATREON MODEL (FREE + SUBSCRIPTION)
+Free tier (proof + trust):
+- Weekly build log
+- One public workflow breakdown
+- One public metric snapshot
+
+Paid tier (implementation depth):
+- Full operator prompts
+- Full runbooks/templates
+- Office-hours teardown of one real workflow/week
+- "Build with me" execution sessions
+
+MONDAY START PROMPT (PASTE-READY)
+"Run FIRST_TASK_PROMPT.txt against this repo.
+Use build-and-verify discipline.
+Pick the smallest complete milestone.
+Prioritize student-facing clarity and measurable ops metrics.
+Return: (1) changes, (2) verification commands, (3) unresolved risks, (4) exact next step."
+
+DONE CRITERIA FOR THIS RUNBOOK
+- You know exactly where to click (View PR, not search).
+- Your Sunday notes are ready before reset.
+- Your first post-reset prompt is prepared.
+- Your metrics sheet schema is defined.
+- Your public/paid teaching split is defined.
