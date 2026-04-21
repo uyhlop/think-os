@@ -1,0 +1,77 @@
+ThinkRN Practice Account Test Run (Manus + Claude)
+
+Goal
+- Run a controlled practice-account workflow that helps you spot what is real vs fake in generated exam content.
+- Keep Step 1 (scrub + objective alignment) consistent every session.
+
+How to use
+1) Copy this entire file into Claude Code.
+2) Tell Claude: "Run in plan mode first, then execute exactly." 
+3) Use only your practice account data and sanitized exam samples.
+
+Execution Prompt
+"""
+Read AGENTS.md, Prompt.md, Plan.md, Status.md, memory/PROJECT_HANDOFF_MEMORY.md, and memory/NEXT_WAKE_STEPS.md first.
+
+You are running a PRACTICE ACCOUNT TEST ONLY.
+Do not publish anything. Do not mark production ready.
+
+Mission:
+- Simulate the daily ThinkRN Step 1 pipeline.
+- Prove whether generated question outputs are clinically grounded and aligned to course objectives.
+- Produce a Real-vs-Fake confidence report.
+
+Required steps:
+1. Intake
+   - Load the practice exam set and objective map.
+   - List missing fields before continuing.
+2. Scrub + Normalize
+   - Normalize every item into one shared structure:
+     {course, objective_id, objective_text, topic, stem, choices, correct_answer, rationale, cognitive_level, safety_tag, source_type, confidence_score}
+3. Objective Alignment Check
+   - For each item, explicitly map to objective_id and objective_text.
+   - Flag any item with weak or no alignment.
+4. Real vs Fake Detection Rules
+   - Mark FAKE_RISK if any of the following are true:
+     a) rationale contradicts known nursing safety logic,
+     b) answer key mismatch,
+     c) stem is vague or impossible to answer fairly,
+     d) objective cannot be identified,
+     e) unsupported clinical claim.
+   - Mark REAL_CANDIDATE when objective alignment is explicit, rationale is coherent, and distractors are clinically plausible.
+5. Datadog-ready Event Outline (no secrets)
+   - Output event names and payload schema only:
+     exam.item.scrubbed
+     exam.item.objective_mapped
+     exam.item.fake_risk_flagged
+     exam.item.real_candidate_confirmed
+   - Include required fields for each event.
+6. Report
+   - Return:
+     A) Counts: total, real_candidate, fake_risk, needs_human_review
+     B) Top 5 failure patterns
+     C) Table of flagged items with reason
+     D) Next 3 actions before production
+7. Handoff Memory Update
+   - Draft updates for memory/PROJECT_HANDOFF_MEMORY.md and memory/NEXT_WAKE_STEPS.md
+   - Include exactly what to run first when I wake up.
+
+Constraints:
+- Original wording only.
+- No copyrighted test bank phrasing.
+- No invented pharmacology/pathophysiology claims.
+- If uncertain, mark needs_human_review.
+"""
+
+Expected output format
+- Section 1: Missing Inputs
+- Section 2: Normalized Schema Validation
+- Section 3: Objective Alignment Summary
+- Section 4: Real vs Fake Risk Report
+- Section 5: Datadog Event Schema
+- Section 6: Immediate Next Steps (Wake-up run order)
+
+Definition of done
+- Every practice item has objective mapping status.
+- Every risky item has a concrete reason.
+- You can explain in plain language why each flagged item is risky.

@@ -1,0 +1,67 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ThinkRN//Builder OS//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:ThinkRN Builder OS Launch
+
+BEGIN:VEVENT
+UID:thinkrn-kickoff-20260420@builderos
+DTSTAMP:20260419T000000Z
+DTSTART:20260420T073000
+DTEND:20260420T090000
+SUMMARY:ThinkRN Step 1 - Datadog Exam Scrub + Course Objective Alignment
+DESCRIPTION:Run Step 1 first. Scrub current exams, analyze in Datadog, and normalize question formatting against course objectives.
+RRULE:FREQ=WEEKLY;BYDAY=MO;UNTIL=20260515T235900
+END:VEVENT
+
+BEGIN:VEVENT
+UID:thinkrn-normalization-20260421@builderos
+DTSTAMP:20260419T000000Z
+DTSTART:20260421T073000
+DTEND:20260421T090000
+SUMMARY:ThinkRN Step 2 - Structured Exam Formatting + Rationales
+DESCRIPTION:Convert random exam generations to structured format and ensure objective-linked rationales.
+RRULE:FREQ=WEEKLY;BYDAY=TU;UNTIL=20260515T235900
+END:VEVENT
+
+BEGIN:VEVENT
+UID:thinkrn-ui-review-20260422@builderos
+DTSTAMP:20260419T000000Z
+DTSTART:20260422T073000
+DTEND:20260422T090000
+SUMMARY:ThinkRN Step 3 - UI Review + Student Clarity Pass
+DESCRIPTION:Review dashboard/cards/missed filters with mobile-first clarity.
+RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20260515T235900
+END:VEVENT
+
+BEGIN:VEVENT
+UID:thinkrn-release-check-20260423@builderos
+DTSTAMP:20260419T000000Z
+DTSTART:20260423T073000
+DTEND:20260423T090000
+SUMMARY:ThinkRN Step 4 - QA Guard + Release Check
+DESCRIPTION:Run verification, check edge/empty states, and record release readiness.
+RRULE:FREQ=WEEKLY;BYDAY=TH;UNTIL=20260515T235900
+END:VEVENT
+
+BEGIN:VEVENT
+UID:thinkrn-launch-sync-20260424@builderos
+DTSTAMP:20260419T000000Z
+DTSTART:20260424T073000
+DTEND:20260424T083000
+SUMMARY:ThinkRN Weekly Launch Sync + Decision Log
+DESCRIPTION:Review open issues, choose next bounded milestone, and update handoff memory files.
+RRULE:FREQ=WEEKLY;BYDAY=FR;UNTIL=20260515T235900
+END:VEVENT
+
+BEGIN:VEVENT
+UID:thinkrn-launch-day-20260515@builderos
+DTSTAMP:20260419T000000Z
+DTSTART:20260515T080000
+DTEND:20260515T100000
+SUMMARY:ThinkRN Builder OS Launch Window
+DESCRIPTION:Launch day execution block with final KPI and handoff checks.
+END:VEVENT
+
+END:VCALENDAR

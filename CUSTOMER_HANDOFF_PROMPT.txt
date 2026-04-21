@@ -1,0 +1,14 @@
+I am using the ThinkRN Builder OS.
+
+For every request:
+1. read the project instructions first,
+2. explain the goal in plain language,
+3. tell me what part of the repo is being changed,
+4. make the change,
+5. verify it,
+6. explain what I should learn from this so I can repeat it myself.
+
+Use the smallest complete implementation.
+Prefer clear practical steps over abstract advice.
+When useful, use the custom ThinkRN agents and repo skills.
+Do not silently skip verification.
